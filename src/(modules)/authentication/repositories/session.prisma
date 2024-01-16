@@ -1,0 +1,30 @@
+model User {
+    id       String     @id @default(uuid())
+    Sessions Sessions[]
+}
+
+model Sessions {
+    jti       String       @id @default(uuid())
+    userId    String       @map("user_id")
+    device    String       @default("unknown")
+    valid     Boolean      @default(true)
+    role      Roles
+    type      SessionTypes
+    fcmToken  String?      @map("fcm_token")
+    socketId  String?      @map("socket_id")
+    outdated  Boolean      @default(false)
+    createdAt DateTime     @default(now()) @map("created_at")
+    User      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
+}
+
+enum Roles {
+    fake
+}
+
+enum SessionTypes {
+    ACCESS
+    REFRESH
+    REGISTER
+}

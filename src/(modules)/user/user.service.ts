@@ -1,0 +1,107 @@
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/globals/services/prisma.service';
+import { hashPassword } from 'src/helpers/password.helpers';
+import { UserPersonalInfoDTO } from './dto/create/personal-info.dto';
+import { PlainUserSelect } from './user.prisma.args';
+import { UserIdInfoDTO } from './dto/create/id-info.dto';
+import { HandelFiles } from '../media/helpers/handel-files';
+import { UserPinCodeDTO } from './dto/create/set-bin.dto';
+
+@Injectable()
+export class UserService {
+  constructor(private prisma: PrismaService) {}
+
+  async init(data: Prisma.UserCreateInput) {
+    await this.validateUniqueValues(data);
+    data.password = hashPassword(data.password);
+    const user = await this.prisma.user.create({ data });
+    return user;
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  async uploadPersonalInfo(id: Id, body: UserPersonalInfoDTO) {
+    await this.prisma.user.update({
+      where: { id },
+      data: body,
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  async uploadIdInfo(id: Id, file: Express.Multer.File, body: UserIdInfoDTO) {
+    const handelFiles = new HandelFiles(id);
+    HandelFiles.generatePath(file, body, id);
+    await this.prisma.user.update({
+      where: { id },
+      data: body,
+    });
+    handelFiles.handelFileTemp(file);
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  async setPin(id: Id, body: UserPinCodeDTO) {
+    body.pinCode = hashPassword(body.pinCode);
+    await this.prisma.user.update({
+      where: { id },
+      data: body,
+    });
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  async getProfile(userId: Id) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: PlainUserSelect,
+    });
+    return user;
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  private async returnExist(idOrEmail: Id | string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [{ id: idOrEmail }, { email: idOrEmail }],
+      },
+    });
+
+    return user;
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  private async isExist(idOrEmail: Id | string) {
+    const user = await this.returnExist(idOrEmail);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
+  private async validateUniqueValues(
+    {
+      email,
+    }: {
+      email?: string;
+    },
+    mine?: {
+      email?: string;
+    },
+  ) {
+    if (email && email !== mine?.email) {
+      const emailExists = await this.prisma.user.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      if (emailExists) throw new ConflictException('Email already exists');
+    }
+  }
+}

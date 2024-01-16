@@ -1,0 +1,46 @@
+model User {
+    id         String     @id @default(uuid())
+    email      String     @unique
+    phone      String?
+    name       String?
+    role       Roles      @default(USER)
+    password   String?
+    pinCode    String?    @map("pin_code")
+    idImage    String?    @map("id_image")
+    nationalId String?    @unique @map("national_id")
+    idType     IdType?    @map("id_type")
+    status     UserStatus @default(EMAIL_VERIFICATION)
+    coutnry    String?
+    address    String?
+    dob        DateTime?
+    gender     Gender?
+    createdAt  DateTime   @default(now()) @map("created_at")
+
+    @@map("users")
+}
+
+enum Roles {
+    ADMIN
+    USER
+}
+
+enum UserStatus {
+    EMAIL_VERIFICATION
+    WAITING_DETAILS
+    ID_VERIFICATION
+    PIN_SETUP
+    ACTIVE
+    INACTIVE
+    BLOCKED
+}
+
+enum Gender {
+    MALE
+    FEMALE
+}
+
+enum IdType {
+    NATIONAL_ID
+    PASSPORT
+    DRIVING_LICENSE
+}

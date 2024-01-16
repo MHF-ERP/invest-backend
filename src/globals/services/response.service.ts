@@ -11,19 +11,27 @@ export class ResponseService {
     data?: Type | Type[] | null,
     total?: number,
     code?: number,
+    token?: string,
   ) {
     response.status(code || HttpStatus.OK).json({
       type: 'Success',
       message,
       data,
       total,
+      token,
     });
   }
-  created(response: Response, message: string, data?: object) {
+  created<Type>(
+    response: Response,
+    message: string,
+    data?: Type | Type[],
+    token?: string,
+  ) {
     response.status(HttpStatus.CREATED).json({
       type: 'Created',
       message,
       data,
+      token,
     });
   }
   forbidden(response: Response, message: string) {

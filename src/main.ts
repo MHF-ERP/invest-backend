@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
-import { AppModule } from './app.module';
+import { AppModule } from './app/app.module';
 import { corsConfig } from './configs/cors.config';
 import { globalValidationPipeOptions } from './configs/pipes.config';
 import { swaggerConfig } from './configs/swagger.config';

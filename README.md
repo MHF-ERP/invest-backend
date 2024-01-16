@@ -35,6 +35,9 @@ $ yarn install
 ## Running the app
 
 ```bash
+# sync db
+$ yarn db:sync
+
 # development
 $ yarn run start
 

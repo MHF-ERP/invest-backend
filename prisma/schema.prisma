@@ -9,7 +9,105 @@ generator client {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id         String     @id @default(uuid())
+  email      String     @unique
+  phone      String?
+  name       String?
+  role       Roles      @default(USER)
+  password   String?
+  pinCode    String?    @map("pin_code")
+  idImage    String?    @map("id_image")
+  nationalId String?    @unique @map("national_id")
+  idType     IdType?    @map("id_type")
+  status     UserStatus @default(EMAIL_VERIFICATION)
+  coutnry    String?
+  address    String?
+  dob        DateTime?
+  gender     Gender?
+  createdAt  DateTime   @default(now()) @map("created_at")
+  Sessions   Sessions[] @relation(name: "SessionsToUser")
+  OTP        OTP[]      @relation(name: "OTPToUser")
 
   @@map("users")
+}
+
+model Sessions {
+  jti       String       @id @default(uuid())
+  userId    String       @map("user_id")
+  device    String       @default("unknown")
+  valid     Boolean      @default(true)
+  role      Roles
+  type      SessionTypes
+  fcmToken  String?      @map("fcm_token")
+  socketId  String?      @map("socket_id")
+  outdated  Boolean      @default(false)
+  createdAt DateTime     @default(now()) @map("created_at")
+  User      User         @relation(name: "SessionsToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model OTP {
+  id             String   @id @default(uuid())
+  userId         String
+  otp            String
+  token          String?
+  status         Status   @default(ACTIVE)
+  role           Roles
+  generatedTimes Int      @default(0)
+  createdAt      DateTime @default(now())
+  User           User     @relation(name: "OTPToUser", fields: [userId], references: [id])
+
+  @@unique([userId, role])
+  @@map("otps")
+}
+
+model RegisterOTP {
+  id             String   @id @default(uuid())
+  email          String
+  otp            String
+  token          String?
+  status         Status   @default(ACTIVE)
+  role           Roles
+  generatedTimes Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  @@unique([email, role])
+  @@map("register_otps")
+}
+
+enum Roles {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  EMAIL_VERIFICATION
+  WAITING_DETAILS
+  ID_VERIFICATION
+  PIN_SETUP
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum IdType {
+  NATIONAL_ID
+  PASSPORT
+  DRIVING_LICENSE
+}
+
+enum SessionTypes {
+  ACCESS
+  REFRESH
+  REGISTER
+}
+
+enum Status {
+  ACTIVE
 }

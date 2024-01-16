@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SessionTypes } from '@prisma/client';
 
 export const swaggerConfig = (app: INestApplication) => {
   const config = new DocumentBuilder()
@@ -16,14 +17,21 @@ export const swaggerConfig = (app: INestApplication) => {
         type: 'http',
         scheme: 'bearer',
       },
-      'Access Token',
+      `${SessionTypes.ACCESS} Token`,
     )
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
       },
-      'Refresh Token',
+      `${SessionTypes.REGISTER} Token`,
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+      },
+      `${SessionTypes.REFRESH} Token`,
     )
 
     .build();
