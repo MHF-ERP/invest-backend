@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserStatus } from '@prisma/client';
 import { PrismaService } from 'src/globals/services/prisma.service';
 import { hashPassword } from 'src/helpers/password.helpers';
 import { UserPersonalInfoDTO } from './dto/create/personal-info.dto';
@@ -42,6 +42,11 @@ export class UserService {
       data: body,
     });
     handelFiles.handelFileTemp(file);
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { status: UserStatus.PIN_SETUP },
+    });
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -50,7 +55,7 @@ export class UserService {
     body.pinCode = hashPassword(body.pinCode);
     await this.prisma.user.update({
       where: { id },
-      data: body,
+      data: { ...body, status: UserStatus.ACTIVE },
     });
   }
 

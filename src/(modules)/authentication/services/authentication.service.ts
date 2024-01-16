@@ -8,13 +8,11 @@ import {
   hashPassword,
   validateUserPassword,
 } from './../../../helpers/password.helpers';
-import { TokenService } from './jwt.service';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private otpService: OTPService,
-    private tokenService: TokenService,
     private prisma: PrismaService,
   ) {}
 
@@ -54,6 +52,11 @@ export class AuthenticationService {
     );
 
     await this.otpService.verifyNewEmailOTPToken(email, token);
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { status: UserStatus.WAITING_DETAILS },
+    });
 
     return token;
   }
@@ -131,7 +134,7 @@ export class AuthenticationService {
 
   private userCanLogin(user: User) {
     if (!user) {
-      throw new UnprocessableEntityException('Invalid email number');
+      throw new UnprocessableEntityException('Invalid Credentials');
     }
 
     if (user.status in [UserStatus.INACTIVE, UserStatus.BLOCKED]) {
