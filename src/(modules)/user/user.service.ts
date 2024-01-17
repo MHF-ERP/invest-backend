@@ -11,10 +11,15 @@ import { PlainUserSelect } from './user.prisma.args';
 import { UserIdInfoDTO } from './dto/create/id-info.dto';
 import { HandelFiles } from '../media/helpers/handel-files';
 import { UserPinCodeDTO } from './dto/create/set-bin.dto';
+import { ResponseService } from 'src/globals/services/response.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+
+    private responseService: ResponseService,
+  ) {}
 
   async init(data: Prisma.UserCreateInput) {
     await this.validateUniqueValues(data);
@@ -35,6 +40,12 @@ export class UserService {
   // ----------------------------------------------------------------------------------------------
 
   async uploadIdInfo(id: Id, file: Express.Multer.File, body: UserIdInfoDTO) {
+    const { nationalId } = body;
+    const nationalIdAlreadyExist = await this.prisma.user.findUnique({
+      where: { nationalId },
+    });
+    if (nationalIdAlreadyExist)
+      throw new ConflictException('NationalID already exists');
     const handelFiles = new HandelFiles(id);
     HandelFiles.generatePath(file, body, id);
     await this.prisma.user.update({
