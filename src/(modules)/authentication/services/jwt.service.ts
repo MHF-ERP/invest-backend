@@ -52,7 +52,9 @@ export class TokenService {
       jwtConfig,
     );
 
-    res.cookie(env('ACCESS_TOKEN_COOKIE_KEY'), token, cookieConfig);
+    res.cookie(env('ACCESS_TOKEN_COOKIE_KEY'), token, {
+      domain: env('Domain'),
+    });
 
     return token;
   }

@@ -10,7 +10,8 @@ model User {
     nationalId String?    @unique @map("national_id")
     idType     IdType?    @map("id_type")
     status     UserStatus @default(EMAIL_VERIFICATION)
-    coutnry    String?
+    country    String?
+    city       String?
     address    String?
     dob        DateTime?
     gender     Gender?

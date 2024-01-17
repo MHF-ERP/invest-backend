@@ -1,5 +1,5 @@
 export const corsConfig = {
-  origin: `http://localhost:${env('PORT')}`,
+  origin: `*`,
   methods: '*',
   credentials: true,
   allowedHeaders:
