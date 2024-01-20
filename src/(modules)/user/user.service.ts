@@ -44,7 +44,7 @@ export class UserService {
     const nationalIdAlreadyExist = await this.prisma.user.findUnique({
       where: { nationalId },
     });
-    if (nationalIdAlreadyExist)
+    if (nationalIdAlreadyExist && id !== nationalIdAlreadyExist['id'])
       throw new ConflictException('NationalID already exists');
     const handelFiles = new HandelFiles(id);
     HandelFiles.generatePath(file, body, id);
@@ -60,6 +60,24 @@ export class UserService {
     });
   }
 
+  async uploadIdInfoWithoutImg(id: Id, body: UserIdInfoDTO) {
+    const { nationalId } = body;
+    const nationalIdAlreadyExist = await this.prisma.user.findUnique({
+      where: { nationalId },
+    });
+    if (nationalIdAlreadyExist && id !== nationalIdAlreadyExist['id'])
+      throw new ConflictException('NationalID already exists');
+    await this.prisma.user.update({
+      where: { id },
+      data: body,
+    });
+
+    await this.prisma.user.update({
+      where: { id },
+      data: { status: UserStatus.PIN_SETUP },
+    });
+  }
+
   // ----------------------------------------------------------------------------------------------
 
   async setPin(id: Id, body: UserPinCodeDTO) {
@@ -68,6 +86,12 @@ export class UserService {
       where: { id },
       data: { ...body, status: UserStatus.ACTIVE },
     });
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return user;
   }
 
   // ----------------------------------------------------------------------------------------------

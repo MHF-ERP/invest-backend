@@ -146,6 +146,19 @@ export class AuthenticationController {
 
   // ----------------------------------------------------------------------------------------------
 
+  @Post('id-info-withoutImg')
+  @Auth({ type: SessionTypes.REGISTER })
+  async idInfoWithoutImg(
+    @Res() res: Response,
+    @Body() body: UserIdInfoDTO,
+    @CurrentUser('id') userId: Id,
+  ) {
+    await this.userService.uploadIdInfoWithoutImg(userId, body);
+    return this.responseService.success(res, 'User data updated successfully');
+  }
+
+  // ----------------------------------------------------------------------------------------------
+
   @Post('set-pin')
   @Auth({ type: SessionTypes.REGISTER })
   async setPin(
