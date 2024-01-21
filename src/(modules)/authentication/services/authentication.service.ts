@@ -79,10 +79,10 @@ export class AuthenticationService {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return;
+      throw new UnprocessableEntityException('Invalid email');
     }
 
-    await this.otpService.generateOTP(email, user.role);
+    //   await this.otpService.generateOTP(email, user.role);
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -99,14 +99,14 @@ export class AuthenticationService {
 
   // ----------------------------------------------------------------------------------------------
 
-  async resetPassword(email: string, token: string, password: string) {
+  async resetPassword(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return;
     }
 
-    await this.otpService.verifyOTPToken(email, token);
+    //   await this.otpService.verifyOTPToken(email, token);
 
     const hashedPassword = hashPassword(password);
 

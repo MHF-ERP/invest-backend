@@ -198,8 +198,8 @@ export class AuthenticationController {
 
   @Post('reset-password')
   async resetPassword(@Res() res: Response, @Body() body: ResetPasswordDTO) {
-    const { email, token, password } = body;
-    await this.authenticationService.resetPassword(email, token, password);
+    const { email, password } = body;
+    await this.authenticationService.resetPassword(email, password);
     return this.responseService.success(res, 'Password reset successfully');
   }
 
