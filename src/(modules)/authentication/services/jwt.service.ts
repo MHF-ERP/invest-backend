@@ -51,10 +51,7 @@ export class TokenService {
       env('ACCESS_TOKEN_SECRET'),
       jwtConfig,
     );
-
-    res.cookie(env('ACCESS_TOKEN_COOKIE_KEY'), token, {
-      domain: env('Domain'),
-    });
+    res.cookie(env('ACCESS_TOKEN_COOKIE_KEY'), token, cookieConfig);
 
     return token;
   }

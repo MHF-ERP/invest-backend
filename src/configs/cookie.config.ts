@@ -1,6 +1,7 @@
 export const cookieConfig = {
-  signed: true,
+  // signed: true,
+  domain: env('API_FRONT_URL'),
   // sameSite: 'none',
-  // httpOnly: true,
-  // secure: false,
+  secure: true ,
+  httpOnly: true,
 };
