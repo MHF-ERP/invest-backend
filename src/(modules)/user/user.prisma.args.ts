@@ -7,6 +7,7 @@ export const JoinedUserDataSelect = {
   phone: true,
   gender: true,
   dob: true,
+  image: true,
 } satisfies Prisma.UserSelect;
 
 export const UserDataSelect = {

@@ -17,6 +17,7 @@ model User {
   password   String?
   pinCode    String?    @map("pin_code")
   idImage    String?    @map("id_image")
+  image      String     @default("default.png")
   nationalId String?    @unique @map("national_id")
   idType     IdType?    @map("id_type")
   status     UserStatus @default(EMAIL_VERIFICATION)
