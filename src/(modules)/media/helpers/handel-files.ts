@@ -36,7 +36,6 @@ export class HandelFiles {
   >(files: FilesType, dto: DTOType, parentPath?: string | number) {
     if (Array.isArray(files))
       for (const key of Object.keys(files)) {
-        // console.log(files.path, parentPath);
         dto[files[key]] = HandelFiles.path(files[key]?.at(0).path, parentPath);
       }
     else dto[files.fieldname] = HandelFiles.path(files?.path, parentPath);

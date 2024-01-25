@@ -82,7 +82,7 @@ export class AuthenticationService {
       throw new UnprocessableEntityException('Invalid email');
     }
 
-    //   await this.otpService.generateOTP(email, user.role);
+    await this.otpService.generateOTP(user.id, user.role);
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ export class AuthenticationService {
       return;
     }
 
-    //   await this.otpService.verifyOTPToken(email, token);
+    // await this.otpService.verifyOTPToken(email, token);
 
     const hashedPassword = hashPassword(password);
 

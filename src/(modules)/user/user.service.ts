@@ -6,20 +6,15 @@ import {
 import { Prisma, UserStatus } from '@prisma/client';
 import { PrismaService } from 'src/globals/services/prisma.service';
 import { hashPassword } from 'src/helpers/password.helpers';
-import { UserPersonalInfoDTO } from './dto/create/personal-info.dto';
-import { PlainUserSelect } from './user.prisma.args';
-import { UserIdInfoDTO } from './dto/create/id-info.dto';
 import { HandelFiles } from '../media/helpers/handel-files';
+import { UserIdInfoDTO } from './dto/create/id-info.dto';
+import { UserPersonalInfoDTO } from './dto/create/personal-info.dto';
 import { UserPinCodeDTO } from './dto/create/set-bin.dto';
-import { ResponseService } from 'src/globals/services/response.service';
+import { PlainUserSelect } from './user.prisma.args';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private prisma: PrismaService,
-
-    private responseService: ResponseService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async init(data: Prisma.UserCreateInput) {
     await this.validateUniqueValues(data);
@@ -33,7 +28,7 @@ export class UserService {
   async uploadPersonalInfo(id: Id, body: UserPersonalInfoDTO) {
     await this.prisma.user.update({
       where: { id },
-      data: body,
+      data: { ...body, status: UserStatus.ID_VERIFICATION },
     });
   }
 

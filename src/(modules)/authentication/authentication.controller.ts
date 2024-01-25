@@ -12,11 +12,14 @@ import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { SessionTypes } from '@prisma/client';
 import { Request, Response } from 'express';
 import { ResponseService } from 'src/globals/services/response.service';
+import { uploadPath } from '../media/configs/upload.config';
 import { UploadImage } from '../media/decorators/upload.decorator';
 import { UserIdInfoDTO } from '../user/dto/create/id-info.dto';
 import { UserInitDTO } from '../user/dto/create/init.dto';
 import { UserPersonalInfoDTO } from '../user/dto/create/personal-info.dto';
+import { UserPinCodeDTO } from '../user/dto/create/set-bin.dto';
 import { UserService } from '../user/user.service';
+import { OTPService } from './(modules)/otp/otp.service';
 import { Auth } from './decorators/auth.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { EmailDTO, LoginDTO } from './dto/login.dto';
@@ -24,8 +27,6 @@ import { ResetPasswordDTO } from './dto/reset-password.dto';
 import { VerifyOtpDTO } from './dto/verify-otp.dto';
 import { AuthenticationService } from './services/authentication.service';
 import { TokenService } from './services/jwt.service';
-import { uploadPath } from '../media/configs/upload.config';
-import { UserPinCodeDTO } from '../user/dto/create/set-bin.dto';
 
 @Controller('authentication')
 @ApiTags('Authentication')
@@ -36,6 +37,7 @@ export class AuthenticationController {
     private userService: UserService,
     private tokenService: TokenService,
     private responseService: ResponseService,
+    private otpService: OTPService,
   ) {}
 
   @Post('/login')
@@ -79,6 +81,8 @@ export class AuthenticationController {
       SessionTypes.REGISTER,
       res,
     );
+
+    await this.otpService.generateNewEmailOTP(user.email, user.role);
 
     return this.responseService.success(
       res,
@@ -183,8 +187,7 @@ export class AuthenticationController {
 
   @Post('verify-forgot-password')
   async verifyForgotPassword(@Res() res: Response, @Body() body: VerifyOtpDTO) {
-    const email = 'body';
-    const { otp } = body;
+    const { email, otp } = body;
 
     const token = await this.authenticationService.verifyForgotPassword(
       email,
