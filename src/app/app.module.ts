@@ -5,9 +5,16 @@ import { GlobalModule } from '../globals/global.module';
 import { MediaModule } from 'src/(modules)/media/media.module';
 import { AuthenticationModule } from 'src/(modules)/authentication/authentication.module';
 import { UserModule } from 'src/(modules)/user/user.module';
+import { WatchListModule } from 'src/(modules)/watch-list/watch-list.module';
 
 @Module({
-  imports: [GlobalModule, MediaModule, AuthenticationModule, UserModule],
+  imports: [
+    GlobalModule,
+    MediaModule,
+    AuthenticationModule,
+    UserModule,
+    WatchListModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

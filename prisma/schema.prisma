@@ -9,26 +9,27 @@ generator client {
 }
 
 model User {
-  id         String     @id @default(uuid())
-  email      String     @unique
+  id         String      @id @default(uuid())
+  email      String      @unique
   phone      String?
   name       String?
-  role       Roles      @default(USER)
+  role       Roles       @default(USER)
   password   String?
-  pinCode    String?    @map("pin_code")
-  idImage    String?    @map("id_image")
-  image      String     @default("default.png")
-  nationalId String?    @unique @map("national_id")
-  idType     IdType?    @map("id_type")
-  status     UserStatus @default(EMAIL_VERIFICATION)
+  pinCode    String?     @map("pin_code")
+  idImage    String?     @map("id_image")
+  image      String      @default("default.png")
+  nationalId String?     @unique @map("national_id")
+  idType     IdType?     @map("id_type")
+  status     UserStatus  @default(EMAIL_VERIFICATION)
   country    String?
   city       String?
   address    String?
   dob        DateTime?
   gender     Gender?
-  createdAt  DateTime   @default(now()) @map("created_at")
-  Sessions   Sessions[] @relation(name: "SessionsToUser")
-  OTP        OTP[]      @relation(name: "OTPToUser")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  Sessions   Sessions[]  @relation(name: "SessionsToUser")
+  OTP        OTP[]       @relation(name: "OTPToUser")
+  WatchLists WatchList[] @relation(name: "UserToWatchList")
 
   @@map("users")
 }
@@ -76,6 +77,22 @@ model RegisterOTP {
 
   @@unique([email, role])
   @@map("register_otps")
+}
+
+model WatchList {
+  id     String            @id @default(uuid())
+  name   String
+  userId String            @map("user_id")
+  User   User              @relation(name: "UserToWatchList", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Stocks WatchListStocks[] @relation(name: "WatchListToWatchListStocks")
+}
+
+model WatchListStocks {
+  watchListId String    @map("watch_list_id")
+  symbol      String
+  WatchList   WatchList @relation(name: "WatchListToWatchListStocks", fields: [watchListId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([watchListId, symbol])
 }
 
 enum Roles {

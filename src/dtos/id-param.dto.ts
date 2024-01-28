@@ -1,15 +1,12 @@
-import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class RequiredIdParam {
-  @Transform(({ value }) => +value)
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: Id;
 }
 
 export class OptionalIdParam {
   @IsOptional()
-  @Transform(({ value }) => +value)
-  @IsNumber()
-  id?: number;
+  @IsString()
+  id?: Id;
 }
