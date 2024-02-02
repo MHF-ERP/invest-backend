@@ -5,12 +5,16 @@ import {
 } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Roles } from '@prisma/client';
+import { MailService } from 'src/globals/services/mail.service';
 import { PrismaService } from 'src/globals/services/prisma.service';
 import { generateRandomNumberString } from 'src/helpers/generate-random-numbers';
 
 @Injectable()
 export class OTPService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailService: MailService,
+  ) {}
 
   async generateOTP(userId: Id, role: Roles) {
     const otp = env('DEFAULT_OTP')
@@ -29,9 +33,12 @@ export class OTPService {
         createdAt: otpIsExist?.generatedTimes <= 3 ? new Date() : undefined,
       },
       create: { userId, role, otp },
+      select: { User: { select: { email: true } }, generatedTimes: true },
     });
     if (dbOtp.generatedTimes > 2)
       throw new BadRequestException('Too many requests');
+
+    await this.mailService.resetPassword(dbOtp.User.email, otp);
     return otp;
   }
 
@@ -94,6 +101,8 @@ export class OTPService {
     });
     if (dbOtp.generatedTimes > 2)
       throw new BadRequestException('Too many requests');
+
+    await this.mailService.verifyOTP(email, otp);
     return otp;
   }
 
