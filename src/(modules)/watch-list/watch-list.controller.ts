@@ -26,7 +26,6 @@ export class WatchListController {
   ) {}
 
   @Auth({})
-  @ApiRequiredIdParam()
   @Post('/')
   async addWatchList(
     @Res() res: Response,
@@ -43,7 +42,17 @@ export class WatchListController {
       insertedWatchList,
     );
   }
+  @Auth({})
+  @Get('/all')
+  async getAllWatchList(@Res() res: Response, @CurrentUser('id') userId: Id) {
+    const watchList = await this.watchListService.getAllWatchLists(userId);
 
+    return this.responseService.success(
+      res,
+      'watch-list returned successfully',
+      watchList,
+    );
+  }
   @Auth({})
   @ApiRequiredIdParam()
   @Get('/:id')

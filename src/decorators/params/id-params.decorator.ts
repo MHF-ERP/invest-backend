@@ -9,6 +9,6 @@ export function ApiOptionalIdParam() {
 
 export function ApiRequiredIdParam() {
   return applyDecorators(
-    ApiParam({ name: 'id', type: Number, required: true }),
+    ApiParam({ name: 'id', type: String, required: true }),
   );
 }

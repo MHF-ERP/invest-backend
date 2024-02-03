@@ -26,6 +26,14 @@ export class WatchListService {
 
     return watchList;
   }
+  async getAllWatchLists(id: Id) {
+    const watchList = await this.prismaService.watchList.findMany({
+      where: { userId: id },
+      include: { Stocks: true },
+    });
+
+    return watchList;
+  }
 
   async deleteWatchList(id: Id) {
     await this.prismaService.watchList.delete({
