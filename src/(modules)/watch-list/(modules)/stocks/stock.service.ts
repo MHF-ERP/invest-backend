@@ -6,12 +6,16 @@ import { AddStocksDTO } from './dto/add-stocks.dto';
 export class WatchListStocksService {
   constructor(private prismaService: PrismaService) {}
 
-  async addStocks(stocksList: AddStocksDTO, watchListId: Id) {
-    console.log(stocksList);
-    const { symbols } = stocksList;
+  async addStocks(stocksList: AddStocksDTO, symbol: Id) {
+    const { watch_list_ids } = stocksList;
     const insertedWatchList =
       await this.prismaService.watchListStocks.createMany({
-        data: symbols.map((symbol) => ({ symbol, watchListId })),
+        data: watch_list_ids.map((watchListId) => ({
+          symbol,
+          watchListId,
+          // symbol,
+          // watch_list_id,
+        })),
       });
 
     return insertedWatchList;
