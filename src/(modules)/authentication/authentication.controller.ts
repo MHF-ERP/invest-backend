@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Inject,
+  Get,
   Post,
   Req,
   Res,
@@ -208,7 +209,7 @@ export class AuthenticationController {
 
   // ----------------------------------------------------------------------------------------------
 
-  @Post('logout')
+  @Get('logout')
   @Auth({})
   async logout(@Res() res: Response, @Req() req: Request) {
     await this.authenticationService.logout(req);
