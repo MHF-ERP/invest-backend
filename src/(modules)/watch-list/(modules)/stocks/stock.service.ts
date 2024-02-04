@@ -7,6 +7,7 @@ export class WatchListStocksService {
   constructor(private prismaService: PrismaService) {}
 
   async addStocks(stocksList: AddStocksDTO, watchListId: Id) {
+    console.log(stocksList);
     const { symbols } = stocksList;
     const insertedWatchList =
       await this.prismaService.watchListStocks.createMany({
