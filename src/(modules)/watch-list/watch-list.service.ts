@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/globals/services/prisma.service';
 import { AddWatchListDTO } from './dto/add-watch-list.dto';
 
@@ -8,6 +12,8 @@ export class WatchListService {
 
   async addWatchList(watchListBody: AddWatchListDTO) {
     const { symbols, ...watchList } = watchListBody;
+    const exist = await this.isExist(watchList.userId, watchList.name);
+    if (exist) throw new ConflictException('watch list already exist');
     const insertedWatchList = await this.prismaService.watchList.create({
       data: {
         ...watchList,
@@ -26,6 +32,7 @@ export class WatchListService {
 
     return watchList;
   }
+
   async getAllWatchLists(id: Id) {
     const watchList = await this.prismaService.watchList.findMany({
       where: { userId: id },
@@ -39,6 +46,14 @@ export class WatchListService {
     await this.prismaService.watchList.delete({
       where: { id },
     });
+  }
+
+  async isExist(userId: Id, name: string) {
+    const watchList = await this.prismaService.watchList.findFirst({
+      where: { userId, name },
+    });
+
+    return watchList;
   }
 
   async canAccessWatchList(id: Id, userId: Id) {
