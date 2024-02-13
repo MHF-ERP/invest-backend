@@ -33,10 +33,22 @@ export class OTPService {
         createdAt: otpIsExist?.generatedTimes <= 3 ? new Date() : undefined,
       },
       create: { userId, role, otp },
-      select: { User: { select: { email: true } }, generatedTimes: true },
+      select: {
+        User: { select: { email: true } },
+        generatedTimes: true,
+        createdAt: true,
+      },
     });
-    if (dbOtp.generatedTimes > 2)
+    if (
+      dbOtp.generatedTimes > 2 &&
+      dbOtp.createdAt > new Date(Date.now() - +env('OTP_IGNORE_TIME'))
+    )
       throw new BadRequestException('Too many requests');
+    if (dbOtp.generatedTimes > 2)
+      await this.prisma.oTP.update({
+        where: { userId_role: { userId, role } },
+        data: { generatedTimes: 1 },
+      });
 
     await this.mailService.resetPassword(dbOtp.User.email, otp);
     return otp;
@@ -99,9 +111,16 @@ export class OTPService {
       },
       create: { email, role, otp },
     });
-    if (dbOtp.generatedTimes > 2)
+    if (
+      dbOtp.generatedTimes > 2 &&
+      dbOtp.createdAt > new Date(Date.now() - +env('OTP_IGNORE_TIME'))
+    )
       throw new BadRequestException('Too many requests');
-
+    if (dbOtp.generatedTimes > 2)
+      await this.prisma.registerOTP.update({
+        where: { email_role: { email, role } },
+        data: { generatedTimes: 1 },
+      });
     await this.mailService.verifyOTP(email, otp);
     return otp;
   }
