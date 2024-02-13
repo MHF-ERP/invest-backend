@@ -5,7 +5,10 @@ import {
 } from '@nestjs/common';
 import { Prisma, UserStatus } from '@prisma/client';
 import { PrismaService } from 'src/globals/services/prisma.service';
-import { hashPassword } from 'src/helpers/password.helpers';
+import {
+  hashPassword,
+  validateUserPassword,
+} from 'src/helpers/password.helpers';
 import { HandelFiles } from '../media/helpers/handel-files';
 import { UserIdInfoDTO } from './dto/create/id-info.dto';
 import { UserPersonalInfoDTO } from './dto/create/personal-info.dto';
@@ -17,7 +20,18 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async init(data: Prisma.UserCreateInput) {
-    await this.validateUniqueValues(data);
+    const existUser = await this.validateUniqueValues(data);
+    if (
+      existUser &&
+      existUser.status !== UserStatus.ACTIVE &&
+      existUser.status !== UserStatus.BLOCKED
+    ) {
+      validateUserPassword(data.password, existUser.password);
+      return existUser;
+    }
+
+    if (existUser) throw new ConflictException('Email already exists');
+
     data.password = hashPassword(data.password);
     const user = await this.prisma.user.create({ data });
     return user;
@@ -132,11 +146,9 @@ export class UserService {
     },
   ) {
     if (email && email !== mine?.email) {
-      const emailExists = await this.prisma.user.findUnique({
+      return await this.prisma.user.findUnique({
         where: { email },
-        select: { id: true },
       });
-      if (emailExists) throw new ConflictException('Email already exists');
     }
   }
 }
