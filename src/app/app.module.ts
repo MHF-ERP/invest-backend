@@ -7,9 +7,11 @@ import { AuthenticationModule } from 'src/(modules)/authentication/authenticatio
 import { UserModule } from 'src/(modules)/user/user.module';
 import { WatchListModule } from 'src/(modules)/watch-list/watch-list.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MailerModule.forRoot({
       transport: {
         host: env('MAIL_HOST'),

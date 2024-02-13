@@ -151,5 +151,12 @@ export class OTPService {
         },
       },
     });
+    await this.prisma.registerOTP.deleteMany({
+      where: {
+        createdAt: {
+          lte: new Date(Date.now() - +env('OTP_IGNORE_TIME')),
+        },
+      },
+    });
   }
 }
