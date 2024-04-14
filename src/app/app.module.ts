@@ -8,6 +8,7 @@ import { UserModule } from 'src/(modules)/user/user.module';
 import { WatchListModule } from 'src/(modules)/watch-list/watch-list.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MyWalletModule } from 'src/(modules)/my-wallet/my-wallet.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthenticationModule,
     UserModule,
     WatchListModule,
+    MyWalletModule,
   ],
   controllers: [AppController],
   providers: [AppService],

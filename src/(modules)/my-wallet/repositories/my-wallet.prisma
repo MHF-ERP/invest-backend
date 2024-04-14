@@ -1,0 +1,28 @@
+model User {
+    id       String  @id
+    MyWallet Wallet?
+}
+
+model Wallet {
+    id      String @id
+    balance Float  @default(0)
+
+    User         User           @relation(fields: [id], references: [id])
+    Transactions Transactions[]
+
+    @@map("wallets")
+}
+
+model Transactions {
+    id        String   @id @default(uuid())
+    symbol    String
+    amount    Float
+    price     Float
+    walletId  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    Wallet Wallet @relation(fields: [walletId], references: [id])
+
+    @@map("transactions")
+}

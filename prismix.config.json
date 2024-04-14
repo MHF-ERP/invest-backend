@@ -6,7 +6,8 @@
         "src/(modules)/user/repositories/user.prisma",
         "src/(modules)/authentication/repositories/session.prisma",
         "src/(modules)/authentication/(modules)/otp/otp.prisma",
-        "src/(modules)/watch-list/repositories/watch-list.prisma"
+        "src/(modules)/watch-list/repositories/watch-list.prisma",
+        "src/(modules)/my-wallet/repositories/my-wallet.prisma"
       ],
       "output": "prisma/schema.prisma"
     }
