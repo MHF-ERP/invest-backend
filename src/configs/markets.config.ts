@@ -1,5 +1,5 @@
 export const Markets = {
-  SAMarket: [
+  SAU: [
     '4310.SR',
     '2222.SR',
     '2380.SR',
@@ -233,7 +233,7 @@ export const Markets = {
     '4323.SR',
     '70403.SR',
   ],
-  USMarket: [
+  USA: [
     'MSFT',
     'AAPL',
     'NVDA',
@@ -284,7 +284,7 @@ export const Markets = {
     'ISRG',
     'SCHW',
   ],
-  UKMarket: [
+  UK: [
     'AZN',
     'LYG',
     'HSBC',
@@ -335,7 +335,7 @@ export const Markets = {
     'BCYC',
     'BSIG',
   ],
-  AustralianMarket: [
+  AUS: [
     'BHP',
     'CBA',
     'RIO',
@@ -387,7 +387,7 @@ export const Markets = {
     'BSL',
     'MPL',
   ],
-  JapanizeMarket: [
+  JAP: [
     '7203.t',
     '8306.t',
     '8035.t',

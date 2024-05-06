@@ -25,7 +25,7 @@ export class MyWalletService {
     const wallet = await this.prismaService.wallet.findUnique({
       where: { id: userId },
       include: {
-        Transactions: true,
+        Transactions: { orderBy: { createdAt: 'desc' } },
       },
     });
 
@@ -86,7 +86,11 @@ export class MyWalletService {
       }
     });
 
-    return { ...rest, myStocks };
+    return {
+      ...rest,
+      lastTransaction: Transactions?.at(0)?.createdAt,
+      myStocks,
+    };
   }
 
   async buyStock(userId: Id, body: TransactionDTO) {
