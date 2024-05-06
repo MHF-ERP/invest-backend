@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
-import { MarketsType } from 'src/configs/markets.config';
+import { Markets, MarketsType } from 'src/configs/markets.config';
 import { ResponseService } from 'src/globals/services/response.service';
 import { MarketService } from './markets.service';
 
@@ -26,13 +26,7 @@ export class MarketController {
   @Get('stocks/:market')
   @ApiParam({
     name: 'market',
-    enum: [
-      'SAMarket',
-      'USMarket',
-      'UKMarket',
-      'AustralianMarket',
-      'JapanizeMarket',
-    ],
+    enum: Object.keys(Markets),
   })
   returnMarketStocks(
     @Res() res: Response,
