@@ -9,6 +9,7 @@ import { WatchListModule } from 'src/(modules)/watch-list/watch-list.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MyWalletModule } from 'src/(modules)/my-wallet/my-wallet.module';
+import { MarketsModule } from 'src/(modules)/markets/markets.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { MyWalletModule } from 'src/(modules)/my-wallet/my-wallet.module';
     UserModule,
     WatchListModule,
     MyWalletModule,
+    MarketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
