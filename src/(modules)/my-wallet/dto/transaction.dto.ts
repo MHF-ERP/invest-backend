@@ -22,4 +22,12 @@ export class TransactionDTO {
   })
   @IsNumber()
   price: number;
+
+  @ApiProperty()
+  @Transform(({ value }) => {
+    const number = Number(value || 0) || 0;
+    return Math.abs(number);
+  })
+  @IsNumber()
+  commission: number;
 }

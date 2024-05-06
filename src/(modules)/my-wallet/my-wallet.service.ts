@@ -109,7 +109,7 @@ export class MyWalletService {
   }
 
   async sellStock(userId: Id, body: TransactionDTO) {
-    const { symbol, amount, price } = body;
+    const { symbol, amount, price, commission } = body;
     await this.prismaService.$transaction(async (prisma) => {
       const doYouHave = await prisma.transactions.groupBy({
         by: ['symbol'],
@@ -128,10 +128,11 @@ export class MyWalletService {
           symbol,
           amount: -amount,
           price,
+          commission: commission,
         },
       });
       await prisma.wallet.update({
-        data: { balance: { increment: amount * price * -1 } },
+        data: { balance: { increment: amount * price * -1 - commission } },
         where: { id: userId },
       });
     });
