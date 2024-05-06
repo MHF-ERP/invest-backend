@@ -80,7 +80,7 @@ export class MyWalletService {
           symbol,
           amount,
           price,
-          prediction: predictions.find((pred) => pred.symbol === symbol),
+          prediction: predictions.find((pred) => pred?.symbol === symbol),
           history: [{ amount, price, createdAt }],
         });
       }
