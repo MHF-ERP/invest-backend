@@ -61,27 +61,30 @@ export class MyWalletService {
           amount: number;
           price: number;
           createdAt: Date;
+          commission?: number;
+          provider?: string;
         },
       ];
     }[] = [];
 
     Transactions.forEach((transaction) => {
       if (!stocks.includes(transaction.symbol)) return;
-      const { symbol, amount, price, createdAt } = transaction;
+      const { symbol, amount, price, createdAt, commission, provider } =
+        transaction;
       const isIn = myStocks.find((existStock) => existStock.symbol === symbol);
       if (isIn) {
         isIn.amount += amount;
         isIn.price =
           (Math.abs(isIn.price) * Math.abs(isIn.amount) + price * amount) /
           (Math.abs(isIn.amount) + amount);
-        isIn.history.push({ amount, price, createdAt });
+        isIn.history.push({ amount, price, createdAt, commission, provider });
       } else {
         myStocks.push({
           symbol,
           amount,
           price,
           prediction: predictions.find((pred) => pred?.symbol === symbol),
-          history: [{ amount, price, createdAt }],
+          history: [{ amount, price, createdAt, commission, provider }],
         });
       }
     });
@@ -140,6 +143,51 @@ export class MyWalletService {
         where: { id: userId },
       });
     });
+  }
+
+  async stockDetails(symbol: string, userId: Id) {
+    const stockTransactions = await this.prismaService.transactions.findMany({
+      where: { symbol, walletId: userId },
+      orderBy: { createdAt: 'desc' },
+    });
+    const lastBuy = stockTransactions.find(
+      (transaction) => transaction.amount > 0,
+    );
+    const lastSell = stockTransactions.find(
+      (transaction) => transaction.amount < 0,
+    );
+
+    const stats = {
+      firstBought: stockTransactions.at(-1)?.createdAt,
+      lastTransaction: stockTransactions.at(0)?.createdAt,
+      lastTransactionType: stockTransactions.at(0)?.amount > 0 ? 'buy' : 'sell',
+      lastTransactionPrice: stockTransactions.at(0)?.price,
+      lastTransactionAmount: stockTransactions.at(0)?.amount,
+      lastBuy: { price: lastBuy?.price, date: lastBuy?.createdAt },
+      lastSell: {
+        price: lastSell?.price,
+        commission: lastSell?.commission,
+        date: lastSell?.createdAt,
+      },
+
+      providers: [],
+      manipulated: 0,
+      remaining: 0,
+      sold: 0,
+      bought: 0,
+    };
+
+    stockTransactions.forEach((transaction) => {
+      const amount = Math.abs(transaction.amount);
+      transaction.amount > 0
+        ? (stats.bought += amount)
+        : (stats.sold += amount);
+      stats.manipulated += amount;
+      stats.providers.includes(transaction.provider)
+        ? stats.providers
+        : stats.providers.push(transaction.provider);
+    });
+    stats.remaining = stats.bought - stats.sold;
   }
 
   async predictStock(symbol: string) {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseService } from 'src/globals/services/response.service';
 import { MyWalletService } from './my-wallet.service';
@@ -6,6 +6,7 @@ import { Auth } from '../authentication/decorators/auth.decorator';
 import { Response } from 'express';
 import { CurrentUser } from '../authentication/decorators/current-user.decorator';
 import { TransactionDTO } from './dto/transaction.dto';
+import { RequiredIdParam } from 'src/dtos/id-param.dto';
 
 @Controller('my-wallet')
 @ApiTags('My Wallet')
@@ -42,5 +43,19 @@ export class MyWalletController {
   ) {
     await this.myWalletService.sellStock(userId, body);
     return this.responseService.success(res, 'Bought Stock');
+  }
+
+  @Get('/stock-details/:id')
+  @Auth({})
+  async detailsStock(
+    @Res() res: Response,
+    @CurrentUser('id') userId: Id,
+    @Param() { id: symbol }: RequiredIdParam,
+  ) {
+    const stockDetails = await this.myWalletService.stockDetails(
+      symbol,
+      userId,
+    );
+    return this.responseService.success(res, 'stock details', stockDetails);
   }
 }

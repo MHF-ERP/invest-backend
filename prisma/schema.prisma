@@ -112,6 +112,7 @@ model Transactions {
   price      Float
   walletId   String
   commission Float    @default(0)
+  provider   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   Wallet     Wallet   @relation(name: "TransactionsToWallet", fields: [walletId], references: [id])

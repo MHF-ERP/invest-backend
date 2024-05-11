@@ -30,4 +30,8 @@ export class TransactionDTO {
   })
   @IsNumber()
   commission: number;
+
+  @ApiProperty()
+  @IsString()
+  provider: string;
 }
