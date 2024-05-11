@@ -7,6 +7,7 @@ import { Response } from 'express';
 import { CurrentUser } from '../authentication/decorators/current-user.decorator';
 import { TransactionDTO } from './dto/transaction.dto';
 import { RequiredIdParam } from 'src/dtos/id-param.dto';
+import { ApiRequiredIdParam } from 'src/decorators/params/id-params.decorator';
 
 @Controller('my-wallet')
 @ApiTags('My Wallet')
@@ -47,6 +48,7 @@ export class MyWalletController {
 
   @Get('/stock-details/:id')
   @Auth({})
+  @ApiRequiredIdParam()
   async detailsStock(
     @Res() res: Response,
     @CurrentUser('id') userId: Id,
