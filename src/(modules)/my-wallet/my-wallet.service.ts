@@ -163,8 +163,13 @@ export class MyWalletService {
       lastTransactionType: stockTransactions.at(0)?.amount > 0 ? 'buy' : 'sell',
       lastTransactionPrice: stockTransactions.at(0)?.price,
       lastTransactionAmount: stockTransactions.at(0)?.amount,
-      lastBuy: { price: lastBuy?.price, date: lastBuy?.createdAt },
+      lastBuy: {
+        amount: lastBuy.amount,
+        price: lastBuy?.price,
+        date: lastBuy?.createdAt,
+      },
       lastSell: {
+        amount: Math.abs(lastSell.amount),
         price: lastSell?.price,
         commission: lastSell?.commission,
         date: lastSell?.createdAt,
