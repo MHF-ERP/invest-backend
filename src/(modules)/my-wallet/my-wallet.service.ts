@@ -188,6 +188,8 @@ export class MyWalletService {
         : stats.providers.push(transaction.provider);
     });
     stats.remaining = stats.bought - stats.sold;
+
+    return stats;
   }
 
   async predictStock(symbol: string) {
