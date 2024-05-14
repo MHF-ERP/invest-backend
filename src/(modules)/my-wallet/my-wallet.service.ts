@@ -165,6 +165,7 @@ export class MyWalletService {
       lastTransactionType: stockTransactions.at(0)?.amount > 0 ? 'buy' : 'sell',
       lastTransactionPrice: stockTransactions.at(0)?.price,
       lastTransactionAmount: stockTransactions.at(0)?.amount,
+      symbol,
       lastBuy: {
         amount: lastBuy.amount,
         price: lastBuy?.price,
