@@ -36,7 +36,7 @@ export class MyWalletService {
     });
 
     const stocks = agg.map((stock) => {
-      return stock.symbol;
+    return  stock.symbol;
     });
 
     const promises = stocks.map((stock) => {
@@ -171,12 +171,14 @@ export class MyWalletService {
         price: lastBuy?.price,
         date: lastBuy?.createdAt,
       },
+      ...lastSell &&{
       lastSell: {
-        amount: Math.abs(lastSell.amount),
+        amount:  Math.abs(lastSell.amount),
         price: lastSell?.price,
         commission: lastSell?.commission,
         date: lastSell?.createdAt,
       },
+    },
 
       providers: [],
       manipulated: 0,
