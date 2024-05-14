@@ -36,7 +36,7 @@ export class MyWalletService {
     });
 
     const stocks = agg.map((stock) => {
-      if (stock._sum.amount > 0) return stock.symbol;
+      return stock.symbol;
     });
 
     const promises = stocks.map((stock) => {
@@ -97,7 +97,7 @@ export class MyWalletService {
   }
 
   async buyStock(userId: Id, body: TransactionDTO) {
-    const { symbol, amount, price } = body;
+    const { symbol, amount, price, provider } = body;
 
     await this.prismaService.$transaction(async (prisma) => {
       await prisma.transactions.create({
@@ -106,6 +106,7 @@ export class MyWalletService {
           symbol,
           amount,
           price,
+          provider,
         },
       });
       await prisma.wallet.update({
@@ -116,7 +117,7 @@ export class MyWalletService {
   }
 
   async sellStock(userId: Id, body: TransactionDTO) {
-    const { symbol, amount, price, commission } = body;
+    const { symbol, amount, price, commission, provider } = body;
     await this.prismaService.$transaction(async (prisma) => {
       const doYouHave = await prisma.transactions.groupBy({
         by: ['symbol'],
@@ -136,6 +137,7 @@ export class MyWalletService {
           amount: -amount,
           price,
           commission: commission,
+          provider,
         },
       });
       await prisma.wallet.update({
