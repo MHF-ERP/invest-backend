@@ -97,7 +97,7 @@ export class MyWalletService {
   }
 
   async buyStock(userId: Id, body: TransactionDTO) {
-    const { symbol, amount, price } = body;
+    const { symbol, amount, price, provider } = body;
 
     await this.prismaService.$transaction(async (prisma) => {
       await prisma.transactions.create({
@@ -106,6 +106,7 @@ export class MyWalletService {
           symbol,
           amount,
           price,
+          provider,
         },
       });
       await prisma.wallet.update({
@@ -116,7 +117,7 @@ export class MyWalletService {
   }
 
   async sellStock(userId: Id, body: TransactionDTO) {
-    const { symbol, amount, price, commission } = body;
+    const { symbol, amount, price, commission, provider } = body;
     await this.prismaService.$transaction(async (prisma) => {
       const doYouHave = await prisma.transactions.groupBy({
         by: ['symbol'],
@@ -136,6 +137,7 @@ export class MyWalletService {
           amount: -amount,
           price,
           commission: commission,
+          provider,
         },
       });
       await prisma.wallet.update({
@@ -163,17 +165,20 @@ export class MyWalletService {
       lastTransactionType: stockTransactions.at(0)?.amount > 0 ? 'buy' : 'sell',
       lastTransactionPrice: stockTransactions.at(0)?.price,
       lastTransactionAmount: stockTransactions.at(0)?.amount,
+      symbol,
       lastBuy: {
         amount: lastBuy.amount,
         price: lastBuy?.price,
         date: lastBuy?.createdAt,
       },
-      lastSell: {
-        amount: Math.abs(lastSell.amount),
-        price: lastSell?.price,
-        commission: lastSell?.commission,
-        date: lastSell?.createdAt,
-      },
+      ...(lastSell && {
+        lastSell: {
+          amount: Math.abs(lastSell.amount),
+          price: lastSell?.price,
+          commission: lastSell?.commission,
+          date: lastSell?.createdAt,
+        },
+      }),
 
       providers: [],
       manipulated: 0,
