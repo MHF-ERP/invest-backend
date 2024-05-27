@@ -36,7 +36,7 @@ export class MyWalletService {
     });
 
     const stocks = agg.map((stock) => {
-      if (stock._sum.amount > 0) return stock.symbol;
+      return stock.symbol;
     });
 
     const promises = stocks.map((stock) => {
