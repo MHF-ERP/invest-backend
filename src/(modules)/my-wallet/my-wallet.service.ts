@@ -66,18 +66,20 @@ export class MyWalletService {
         },
       ];
     }[] = [];
-
     Transactions.forEach((transaction) => {
       if (!stocks.includes(transaction.symbol)) return;
       const { symbol, amount, price, createdAt, commission, provider } =
         transaction;
       const isIn = myStocks.find((existStock) => existStock.symbol === symbol);
       if (isIn) {
+       
         isIn.amount += amount;
-        isIn.price =
-          (Math.abs(isIn.price) * Math.abs(isIn.amount) + price * amount) /
-          (Math.abs(isIn.amount) + amount);
+    
+        isIn.price  = 
+        (Math.abs(isIn.price) * (Math.abs(isIn.amount) - amount) + price * amount) /
+        (Math.abs(isIn.amount) );
         isIn.history.push({ amount, price, createdAt, commission, provider });
+    
       } else {
         myStocks.push({
           symbol,
