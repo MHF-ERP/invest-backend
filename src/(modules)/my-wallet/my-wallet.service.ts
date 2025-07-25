@@ -39,12 +39,6 @@ export class MyWalletService {
       return stock.symbol;
     });
 
-    const promises = stocks.map((stock) => {
-      return this.predictStock(stock);
-    });
-
-    const predictions = await Promise.all(promises);
-
     if (!wallet) {
       await this.generateWallet(userId);
       return await this.getMyWallet(userId);
@@ -84,7 +78,6 @@ export class MyWalletService {
           symbol,
           amount,
           price,
-          prediction: predictions.find((pred) => pred?.symbol === symbol),
           history: [{ amount, price, createdAt, commission, provider }],
         });
       }

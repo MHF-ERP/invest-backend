@@ -32,7 +32,9 @@ export class MarketController {
     @Res() res: Response,
     @Param('market') market: keyof MarketsType,
   ) {
+    console.log('-----market-----');
     const data = this.marketService.getAllStocks(market);
+    console.log('-----data-----', data);
     return this.responseService.success(
       res,
       'stocks returned successfully',
